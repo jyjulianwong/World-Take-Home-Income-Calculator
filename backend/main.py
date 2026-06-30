@@ -17,9 +17,15 @@ from services.tax import calculate_take_home
 
 app = FastAPI()
 
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    *([o] if (o := os.getenv("ALLOWED_ORIGIN")) else []),
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -29,7 +29,8 @@ export default function CurrencyConverter({ countries, onWinnerChange }) {
     setFetching(true)
     setError(null)
 
-    fetch(`/api/rates?from_currency=${activeCurrency}`)
+    const base = import.meta.env.VITE_API_BASE_URL ?? ''
+    fetch(`${base}/api/rates?from_currency=${activeCurrency}`)
       .then(r => {
         if (!r.ok) return r.json().then(e => { throw new Error(e.detail ?? `"${activeCurrency}" is not a supported currency code`) })
         return r.json()

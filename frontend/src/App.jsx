@@ -21,7 +21,8 @@ export default function App() {
     setError(null)
 
     try {
-      const response = await fetch('/api/compare', {
+      const base = import.meta.env.VITE_API_BASE_URL ?? ''
+      const response = await fetch(`${base}/api/compare`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
