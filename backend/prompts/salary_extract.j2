@@ -1,0 +1,32 @@
+Extract salary data for this job role in this country from the web search snippets below.
+Each snippet includes a source URL, page title, and excerpt.
+
+Job Role: {{ job_role }}
+Country: {{ country }}
+
+Search Snippets:
+{{ snippets }}
+
+Return ONLY a JSON object (no markdown, no explanation):
+{
+  "currency": "<ISO code, e.g. USD>",
+  "currency_symbol": "<e.g. $>",
+  "average": <annual average as integer, or null>,
+  "median": <annual median as integer, or null>,
+  "range_min": <lower typical annual salary as integer, or null>,
+  "range_max": <upper typical annual salary as integer, or null>,
+  "sample_data_points": [
+    {"source": "<site name, e.g. Glassdoor>", "url": "<full URL from the snippet>", "figure": "<salary figure as a string>"}
+  ],
+  "confidence": "<high|medium|low>",
+  "notes": "<caveats>"
+}
+
+Rules:
+- Use the local currency of {{ country }}.
+- Convert any non-annual figures to annual.
+- Discard data that clearly refers to a different country.
+- If only a range is found, set average to the midpoint.
+- Set average/median to null only if the snippets contain zero salary information.
+- For each data point in sample_data_points, use the URL from the snippet it was sourced from.
+- Include at most 5 data points.

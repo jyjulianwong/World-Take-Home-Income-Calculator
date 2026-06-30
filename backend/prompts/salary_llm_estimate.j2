@@ -1,0 +1,18 @@
+Use your training knowledge to estimate the typical annual salary for this role and country.
+{{ reason }}
+
+Job Role: {{ job_role }}
+Country: {{ country }}
+
+Return ONLY a JSON object (no markdown, no explanation):
+{
+  "currency": "<ISO code>",
+  "currency_symbol": "<symbol>",
+  "average": <best-estimate annual average as integer>,
+  "median": <best-estimate annual median as integer>,
+  "range_min": <lower typical annual salary as integer>,
+  "range_max": <upper typical annual salary as integer>,
+  "sample_data_points": [],
+  "confidence": "low",
+  "notes": "{{ note }}"
+}

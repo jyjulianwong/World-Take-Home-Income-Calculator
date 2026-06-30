@@ -1,0 +1,30 @@
+You are a tax calculation expert. Calculate the take-home pay for someone earning the given gross salary in {{ country }}.
+
+Country: {{ country }}
+Gross Annual Salary: {{ gross_annual }} {{ currency }}
+
+Recent tax policy search results for context:
+{{ snippets }}
+
+Using the most accurate and up-to-date tax rules for {{ country }} (2024-2025 tax year), calculate all mandatory deductions.
+Consider: income tax (with progressive brackets), national insurance / social security, mandatory health contributions, and any other unavoidable payroll deductions.
+Do NOT include voluntary deductions (pension, private health insurance, etc.).
+
+Return ONLY valid JSON (no markdown, no explanation):
+{
+  "deductions": [
+    {
+      "name": "<e.g. Federal Income Tax>",
+      "description": "<brief rate/bracket description>",
+      "amount": <integer in {{ currency }}>
+    }
+  ],
+  "total_deductions": <integer>,
+  "take_home_annual": <integer>,
+  "take_home_monthly": <integer>,
+  "effective_tax_rate": <float 0-1, 2 decimal places>,
+  "region_assumption": "<e.g. California, USA — or N/A>",
+  "notes": "<important caveats or assumptions>"
+}
+
+Ensure take_home_annual = {{ gross_annual }} - total_deductions.
