@@ -81,6 +81,23 @@ export default function App() {
           <InputForm onSubmit={handleSubmit} loading={loading} />
         </div>
 
+        {loading && progressSteps.length === 0 && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-sm w-full mx-4 text-center space-y-4 shadow-2xl">
+              <div className="flex justify-center">
+                <div className="w-12 h-12 rounded-full border-4 border-slate-700 border-t-indigo-400 animate-spin" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-white font-semibold text-lg">Waking up the server…</p>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  The service may take up to 30–50 seconds to start.
+                  Your request is queued — hang tight.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading && (
           <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6">
             <p className="text-sm font-semibold text-slate-300 mb-4">Researching…</p>
