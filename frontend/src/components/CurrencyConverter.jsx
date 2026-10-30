@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const QUICK = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'SGD', 'HKD']
 
@@ -12,6 +12,65 @@ function fmtCurrency(amount, code) {
   } catch {
     return `${code} ${amount.toLocaleString()}`
   }
+}
+
+const BAR_SERIES = [
+  { track: 'bg-white/5', fill: 'bg-gradient-to-r from-gold-deep to-gold', glow: '0 0 24px -4px rgba(231, 196, 126, 0.55)' },
+  { track: 'bg-white/5', fill: 'bg-gradient-to-r from-mint-deep to-mint', glow: '0 0 24px -4px rgba(92, 225, 198, 0.55)' },
+]
+
+function ComparisonBars({ countries, converted, activeCurrency }) {
+  const [grown, setGrown] = useState(false)
+  const max = Math.max(...converted.filter(v => v != null), 1)
+
+  useEffect(() => {
+    setGrown(false)
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setGrown(true)))
+    return () => cancelAnimationFrame(id)
+  }, [converted.join(',')])
+
+  if (converted.every(v => v == null)) return null
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-4 font-mono text-xs text-slate-400">
+        {countries.map((c, i) => (
+          <span key={i} className="flex items-center gap-1.5">
+            <span className={`w-2.5 h-2.5 rounded-full ${i === 0 ? 'bg-gold' : 'bg-mint'}`} />
+            {c.name}
+          </span>
+        ))}
+      </div>
+
+      {countries.map((c, i) => {
+        const value = converted[i]
+        const series = BAR_SERIES[i]
+        const widthPct = value != null ? Math.max((value / max) * 100, 4) : 0
+
+        return (
+          <div key={i} className="flex items-center gap-3">
+            <div className={`relative flex-1 h-3.5 rounded-full overflow-hidden ${series.track}`}>
+              {value != null ? (
+                <div
+                  className={`bar-grow h-full rounded-full ${series.fill}`}
+                  style={{
+                    width: '100%',
+                    transform: `scaleX(${grown ? widthPct / 100 : 0})`,
+                    boxShadow: series.glow,
+                  }}
+                />
+              ) : (
+                <div className="absolute inset-0 rounded-full border border-dashed border-white/15" />
+              )}
+            </div>
+            <span className="font-mono text-xs text-slate-300 w-24 text-right shrink-0">
+              {value != null ? fmtCurrency(value, activeCurrency) : '—'}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 export default function CurrencyConverter({ countries, onWinnerChange }) {
@@ -66,10 +125,12 @@ export default function CurrencyConverter({ countries, onWinnerChange }) {
     return rate ? Math.round(amount / rate) : null
   }
 
+  const converted = countries.map(c => convert(c.tax.take_home_annual, c.currency))
+
   return (
-    <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-5">
+    <div className="glass rounded-3xl p-6 space-y-5">
       <div>
-        <h3 className="font-semibold text-white mb-0.5">Compare in a single currency</h3>
+        <h3 className="font-serif font-semibold text-white mb-0.5">Compare in a single currency</h3>
         <p className="text-xs text-slate-500">Rates from Open Exchange Rates, updated daily.</p>
       </div>
 
@@ -79,10 +140,10 @@ export default function CurrencyConverter({ countries, onWinnerChange }) {
           <button
             key={c}
             onClick={() => { setCustom(''); setTarget(c) }}
-            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors
+            className={`px-3 py-1 rounded-full font-mono text-sm font-medium transition-colors
               ${activeCurrency === c && !custom
-                ? 'bg-indigo-600 text-white'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                ? 'bg-gradient-to-r from-gold-soft to-gold text-ink-950'
+                : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10'}`}
           >
             {c}
           </button>
@@ -92,7 +153,7 @@ export default function CurrencyConverter({ countries, onWinnerChange }) {
           onChange={e => setCustom(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))}
           maxLength={3}
           placeholder="Other…"
-          className="w-20 px-3 py-1 rounded-lg text-sm bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-20 px-3 py-1 rounded-full font-mono text-sm bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold/40"
         />
       </div>
 
@@ -101,21 +162,24 @@ export default function CurrencyConverter({ countries, onWinnerChange }) {
       {/* Converted take-home cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {countries.map((c, i) => {
-          const converted = convert(c.tax.take_home_annual, c.currency)
-          const convertedMonthly = converted != null ? Math.round(converted / 12) : null
+          const value = converted[i]
+          const convertedMonthly = value != null ? Math.round(value / 12) : null
 
           return (
-            <div key={i} className="rounded-xl bg-slate-800 p-4 space-y-1">
+            <div key={i} className="rounded-xl bg-white/5 p-4 space-y-1">
               <p className="text-xs font-semibold text-slate-300">{c.name}</p>
-              <p className="text-xs text-slate-500">
+              <p className="font-mono text-xs text-slate-500">
                 {c.currency_symbol}{c.tax.take_home_annual.toLocaleString()} {c.currency} / yr
               </p>
               {fetching ? (
-                <p className="text-xl font-bold text-slate-500 animate-pulse mt-1">Converting…</p>
-              ) : converted != null ? (
+                <div className="space-y-1.5 mt-1.5">
+                  <div className="shimmer h-6 w-32 rounded" />
+                  <div className="shimmer h-4 w-20 rounded" />
+                </div>
+              ) : value != null ? (
                 <>
                   <p className="text-2xl font-extrabold text-white">
-                    {fmtCurrency(converted, activeCurrency)}
+                    {fmtCurrency(value, activeCurrency)}
                     <span className="text-sm font-normal text-slate-400"> / yr</span>
                   </p>
                   <p className="text-sm text-slate-400">
@@ -131,6 +195,8 @@ export default function CurrencyConverter({ countries, onWinnerChange }) {
           )
         })}
       </div>
+
+      {!fetching && <ComparisonBars countries={countries} converted={converted} activeCurrency={activeCurrency} />}
     </div>
   )
 }

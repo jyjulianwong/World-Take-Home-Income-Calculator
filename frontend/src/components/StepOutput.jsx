@@ -3,22 +3,22 @@ function fmt(symbol, amount) {
 }
 
 const CONFIDENCE_STYLE = {
-  high:   'bg-emerald-900 text-emerald-300',
-  medium: 'bg-amber-900 text-amber-300',
-  low:    'bg-red-900 text-red-300',
+  high:   'bg-mint/15 text-mint',
+  medium: 'bg-amber-900/60 text-amber-300',
+  low:    'bg-red-950/60 text-red-300',
 }
 
 function SalaryCard({ countryName, data }) {
   const sym = data.currency_symbol || ''
-  const style = CONFIDENCE_STYLE[data.confidence] ?? 'bg-slate-700 text-slate-300'
+  const style = CONFIDENCE_STYLE[data.confidence] ?? 'bg-white/10 text-slate-300'
 
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4 space-y-3">
+    <div className="glass spotlight rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <p className="text-sm font-semibold text-white">
-          Salary data · <span className="text-indigo-300">{countryName}</span>
+          Salary data · <span className="text-gold">{countryName}</span>
         </p>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${style}`}>
+        <span className={`font-mono text-xs font-medium px-2 py-0.5 rounded-full ${style}`}>
           {data.confidence} confidence
         </span>
       </div>
@@ -31,8 +31,8 @@ function SalaryCard({ countryName, data }) {
               ? `${fmt(sym, data.range_min)}–${fmt(sym, data.range_max)}`
               : null },
         ].map(({ label, value }) => value != null && (
-          <div key={label} className="rounded-lg bg-slate-900 px-2 py-2">
-            <p className="text-xs text-slate-400">{label}</p>
+          <div key={label} className="rounded-lg bg-white/5 px-2 py-2">
+            <p className="font-mono text-xs text-slate-400">{label}</p>
             <p className="text-sm font-bold text-white mt-0.5">
               {label === 'Range' ? value : fmt(sym, value)}
             </p>
@@ -42,14 +42,14 @@ function SalaryCard({ countryName, data }) {
 
       {data.sample_data_points?.length > 0 && (
         <div>
-          <p className="text-xs text-slate-400 mb-1">Sources</p>
+          <p className="font-mono text-xs text-slate-400 mb-1">Sources</p>
           <ul className="space-y-0.5">
             {data.sample_data_points.map((dp, i) => (
               <li key={i} className="text-xs text-slate-400 flex gap-1.5 before:content-['·'] before:text-slate-600">
                 {typeof dp === 'string' ? dp : (
                   <>
                     <a href={dp.url} target="_blank" rel="noopener noreferrer"
-                       className="text-indigo-400 hover:text-indigo-300 hover:underline transition-colors">
+                       className="text-gold hover:text-gold-soft hover:underline transition-colors">
                       {dp.source}
                     </a>
                     : {dp.figure}
@@ -72,9 +72,9 @@ function TaxCard({ countryName, data, currencySymbol }) {
   const sym = currencySymbol || ''
 
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4 space-y-3">
+    <div className="glass spotlight rounded-xl p-4 space-y-3">
       <p className="text-sm font-semibold text-white">
-        Tax breakdown · <span className="text-indigo-300">{countryName}</span>
+        Tax breakdown · <span className="text-gold">{countryName}</span>
         {data.region_assumption && data.region_assumption !== 'N/A' && (
           <span className="text-slate-400 font-normal"> ({data.region_assumption})</span>
         )}
@@ -87,16 +87,16 @@ function TaxCard({ countryName, data, currencySymbol }) {
             <span className="text-red-400 font-medium">− {fmt(sym, d.amount)}</span>
           </div>
         ))}
-        <div className="border-t border-slate-700 pt-1 mt-1 flex justify-between text-xs font-semibold">
+        <div className="border-t border-white/10 pt-1 mt-1 flex justify-between text-xs font-semibold">
           <span className="text-slate-300">Total deducted</span>
           <span className="text-red-400">− {fmt(sym, data.total_deductions)}</span>
         </div>
       </div>
 
-      <div className="rounded-lg bg-slate-900 px-3 py-2 flex justify-between items-center">
-        <p className="text-xs text-slate-400">Take-home</p>
+      <div className="rounded-lg bg-white/5 px-3 py-2 flex justify-between items-center">
+        <p className="font-mono text-xs text-slate-400">Take-home</p>
         <div className="text-right">
-          <p className="text-sm font-bold text-emerald-400">{fmt(sym, data.take_home_annual)} / yr</p>
+          <p className="text-sm font-bold text-mint">{fmt(sym, data.take_home_annual)} / yr</p>
           <p className="text-xs text-slate-400">{fmt(sym, data.take_home_monthly)} / mo</p>
         </div>
       </div>

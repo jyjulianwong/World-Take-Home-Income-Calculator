@@ -17,14 +17,14 @@ export default function ProgressTracker({ steps }) {
 
         return (
           <div key={s.key} className="flex items-center gap-3">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0
-              ${isDone   ? 'bg-emerald-500 text-white' :
-                isActive ? 'bg-indigo-500 text-white animate-pulse' :
-                           'bg-slate-700 text-slate-500'}`}>
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-mono text-xs font-bold shrink-0 border
+              ${isDone   ? 'bg-mint text-ink-950 border-mint' :
+                isActive ? 'border-gold text-gold animate-pulse' :
+                           'border-white/10 text-slate-500'}`}>
               {isDone ? '✓' : i + 1}
             </div>
             <span className={`text-sm
-              ${isDone   ? 'text-emerald-400' :
+              ${isDone   ? 'text-mint' :
                 isActive ? 'text-white' :
                            'text-slate-500'}`}>
               {s.label}

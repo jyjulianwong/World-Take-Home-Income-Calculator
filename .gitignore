@@ -160,7 +160,8 @@ crash.log
 # IDEs
 .cursorrules
 .cursorignore
-.claude/
+.claude/*
+!.claude/skills/
 .cursor/
 .vscode/
 CLAUDE.md
