@@ -34,7 +34,6 @@ jobs:
         working-directory: frontend
         run: npm run build
         env:
-          VITE_BASE_PATH: /${{ github.event.repository.name }}/
           VITE_API_BASE_URL: https://world-take-home-income-calculator.onrender.com
 
       - uses: actions/configure-pages@v5

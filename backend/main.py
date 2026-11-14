@@ -20,7 +20,7 @@ app = FastAPI()
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    *([o] if (o := os.getenv("ALLOWED_ORIGIN")) else []),
+    *([o] if (o := os.getenv("CLIENT_GITHUB_PAGES_ORIGIN")) else []),
 ]
 
 app.add_middleware(
